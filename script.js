@@ -1,4 +1,8 @@
-// Procuts
+
+/* -------------------------------------------------------------------------- */
+/*                          OBJECT ARRAY OF PRODUCTS                          */
+/* -------------------------------------------------------------------------- */
+
 const products = [
     {
     id: 0,
@@ -11,7 +15,7 @@ const products = [
         url: "assets/imgs/the_classic.JPG", 
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En vanlig korv"
         },
     },
     {
@@ -25,7 +29,7 @@ const products = [
         url: "assets/imgs/hela_ganget.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "Korvknyten"
         },
     },
     {
@@ -39,7 +43,7 @@ const products = [
         url: "assets/imgs/jul_kransen.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En falukorv med rosett"
         },
     },
     {
@@ -53,7 +57,7 @@ const products = [
         url: "assets/imgs/stubinen.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En kort, tjock korv"
         },
     },
     {
@@ -67,7 +71,7 @@ const products = [
         url: "assets/imgs/long_boy.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En lång, smal korv"
         },
     },
     {
@@ -81,7 +85,7 @@ const products = [
         url: "assets/imgs/infinity.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En korv formad som en evighetssymbol"
         },
     },
     {
@@ -95,7 +99,7 @@ const products = [
         url: "assets/imgs/couch_sausage.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En säckig, ledsen korv"
         },
     },
     {
@@ -109,7 +113,7 @@ const products = [
         url: "assets/imgs/wurst_case_scenario.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En vågig korv"
         },
     },
     {
@@ -123,7 +127,7 @@ const products = [
         url: "assets/imgs/uzumaki.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En korvsnurra"
         },
     },
     {
@@ -137,35 +141,60 @@ const products = [
         url: "assets/imgs/pin_merch.JPG",
         width: 100,
         height: 100,
-        alt: "En beskrivning här"
+        alt: "En pin-knapp med Peepee Poopoo på"
         },
     },    
 ];
 
 const productsListDiv = document.querySelector("#products-list");
+const cart = document.querySelector("#cart-summary");
 
-function renderProducts() {
+
+/* -------------------------------------------------------------------------- */
+/*                     DISPLAY PRODUCTS AND SET UP BUTTONS                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Prints all products on the page.
+ * Creates HTML for each product.
+ * Adds even listeners for plus, minus and add to cart buttons.
+ */
+function printProductsList() {
     productsListDiv.innerHTML = ""; // Clear the existing product list
-    
-    products.forEach(product => { // Print products
+
+    products.forEach(product => {
         productsListDiv.innerHTML += `
         <article class="product">
-        <h3>${product.name}</h3>
-        <p>${product.price} kr</p>
-        <p>Rating: ${getRatingHtml(product.rating)}</p>
-        <img src="${product.img.url}">
-        <div>
-            <button class="subtract" id="${product.id}">-</button>
-            <input id="input-${product.id}" type="number" value="${product.amount}" min="0">
-            <button class="add" id="${product.id}">+</button>
-        </div>`;
+            <h3>${product.name}</h3>
+            <p>${product.price} kr</p>
+            <p>Rating: ${getRatingHtml(product.rating)}</p>
+            <img src="${product.img.url}" alt="${product.img.alt}">
+            <div>
+                <button class="subtract" id="${product.id}">-</button>
+                <input id="input-${product.id}" type="number" value="${product.amount}" min="0">
+                <button class="add" id="${product.id}">+</button>
+                <button class="add-to-cart" id="cart-${product.id}">Lägg i varukorg</button>
+            </div>
+        </article>`;
     });
 
-    const quantityButtons = document.querySelectorAll("button.add, button.subtract"); // Plus/minus buttons
+    // Add listeners for Plus and Minus buttons
+    const quantityButtons = document.querySelectorAll("button.add, button.subtract");
     quantityButtons.forEach(button => {
         button.addEventListener("click", adjustQuantity);
     });
-}
+
+    // Add listeners for Add to Cart buttons
+    const cartButtons = document.querySelectorAll("button.add-to-cart");
+    cartButtons.forEach(button => {
+        button.addEventListener("click", handleAddToCart);
+    });
+};
+
+
+/* -------------------------------------------------------------------------- */
+/*                                SORT PRODUCTS                               */
+/* -------------------------------------------------------------------------- */
 
 const filterButton = document.querySelectorAll("button.name, button.price, button.rating, button.category");
 filterButton.forEach(button => {
@@ -173,7 +202,35 @@ filterButton.forEach(button => {
 });
 
 /**
- * Handles click event for plus and minus button
+ * Sorts products based on button clicked.
+ * Re-prints list after sorting.
+ * @param {Event} e triggered by Sort By button
+ */
+function sortByButton(e) {
+    if(e.target.classList.contains("name")) { // note to self: localeCompare bestämmer ordningen på strängar
+        products.sort((product1, product2) => product1.name.localeCompare(product2.name));
+    }
+    else if(e.target.classList.contains("price")) {
+        products.sort((product1, product2) => product1.price - product2.price);
+    }
+    else if(e.target.classList.contains("rating")) {
+        products.sort((product1, product2) => product1.rating - product2.rating);
+    }
+    else if(e.target.classList.contains("category")) {
+        products.sort((product1, product2) => product1.category.localeCompare(product2.category));
+    }
+    printProductsList();
+};
+printProductsList();
+
+/* -------------------------------------------------------------------------- */
+/*                            ADD PRODUCTS TO CART                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Adjusts and updates the quantity of products when 
+ * plus and minus buttons are clicked.
+ * Prevents quantity to go below 0.
  * @param {Event} e 
  */
 function adjustQuantity(e) {
@@ -185,39 +242,65 @@ function adjustQuantity(e) {
     } else if (e.target.classList.contains("subtract")) {
         products[foundProduct].amount = Math.max(0, products[foundProduct].amount - 1);
     }
+    document.querySelector(`#input-${productId}`).value = products[foundProduct].amount; // Print products
+};
 
-    document.querySelector(`#input-${productId}`).value = products[foundProduct].amount; // skriv ut produktlistan
+/* -------------------------------------------------------------------------- */
+/*                                SHOPPING CART                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Filters out products with a cart amount of 0.
+ * Clears the cart display on page.
+ * Lists each product in the card with its quantity and total price.
+ * Calculates and display the subtotal of the cart content.
+ */
+function updateAndPrintCart() {
+    const purchasedProducts = products.filter((product) => product.cartAmount > 0);
+    cart.innerHTML = ""; // Clears the div ("Din varukorg är tom.")
+
+    purchasedProducts.forEach(product => {
+        cart.innerHTML += 
+        `<div>
+            ${product.name}: ${product.cartAmount}st - ${product.cartAmount * product.price} kr
+        </div>`;
+    });
+
+    // Display the subtotal
+    const subTotal = purchasedProducts.reduce((sum, product) => sum + (product.cartAmount * product.price), 0);
+    cart.innerHTML += `<p>Delsumma: ${subTotal} kr</p>`;
 };
 
 /**
- * Sort by name/price/rating/category
- * @param {Event} e 
+ * Moves selected product amount to cart.
+ * Resets the selected amount.
+ * Display an updated cart.
+ * @param {Event} e triggered by the Add to Cart button click
  */
-function sortByButton(e) {
-    if(e.target.classList.contains("name")) {
-        products.sort((product1, product2) => product1.name.localeCompare(product2.name));
+function handleAddToCart(e) {
+    const productId = Number(e.target.id.split("-")[1]);  // note to self: ?? what??
+    const product = products.find(product => product.id === productId);
+
+    if (product) {
+        product.cartAmount = (product.cartAmount || 0) + product.amount; // Update cart amount
+        product.amount = 0; 
+
+        document.querySelector(`#input-${productId}`).value = product.amount;
+        updateAndPrintCart();
     }
-    else if(e.target.classList.contains("price")) {
-        products.sort((product1, product2) => product1.price - product2.price);
-    }
-    else if(e.target.classList.contains("rating")) {
-        products.sort((product1, product2) => product1.rating - product2.rating);
-    }
-    else if(e.target.classList.contains("category")) {
-        products.sort((product1, product2) => product1.category.localeCompare(product2.category)); 
-    }
-    renderProducts(); // Re-render the products after sorting
 }
 
-renderProducts();
+
+/* -------------------------------------------------------------------------- */
+/*                                RATING SYSTEM                               */
+/* -------------------------------------------------------------------------- */
 
 /**
- * Stars for rating system
- * @param {Stars} rating 
- * @returns 
+ * Creates HTML for stars in rating system
+ * @param {number} rating rating number value
+ * @returns {string} stars in HTML
  */
 function getRatingHtml(rating) {
-    console.log(rating)
     let html = "";
     for(let i = 0; i < rating; i++) {
         html += `<span class="material-symbols-outlined">star</span>`;
