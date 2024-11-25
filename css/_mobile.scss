@@ -1,10 +1,14 @@
 .product {
-    border-bottom: 2px solid black;
-    margin-bottom: 20px;
+  border-bottom: 2px solid black;
+  margin-bottom: 20px;
 }
 
 img {
-    max-width: 300px;
-    height: auto;
-    display: block;
+  max-width: 300px;
+  height: auto;
+  display: block;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 10;
 }
