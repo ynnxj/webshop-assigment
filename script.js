@@ -167,7 +167,7 @@ function printProductsList() {
         <article class="product">
             <h3>${product.name}</h3>
             <p>${product.price} kr</p>
-            <p>Rating: ${getRatingHtml(product.rating)}</p>
+            <p>Betyg: ${getRatingHtml(product.rating)}</p>
             <img src="${product.img.url}" alt="${product.img.alt}">
             <div>
                 <button class="subtract" id="${product.id}">-</button>
@@ -307,3 +307,112 @@ function getRatingHtml(rating) {
     }
     return html;
 };
+
+/* -------------------------------------------------------------------------- */
+/*                               Payment Options                              */
+/* -------------------------------------------------------------------------- */
+
+// note to self: går inte att tabba mellan faktura och kort...
+
+const personalId = document.querySelector("#personal-id");
+const cardNumber = document.querySelector("#card-number");
+const cardYear = document.querySelector("#card-year");
+const cardMonth = document.querySelector("#card-month");
+const cardCvc = document.querySelector("#card-cvc");
+
+
+// Elements for toggling payment options
+const invoiceOption = document.querySelector("#invoice");
+const cardOption = document.querySelector("#card");
+const orderButton = document.querySelector("#order-button")
+
+// RegEx
+const personalIdRegEx = new RegExp(/^\d{6,8}[-|(\s)]{0,1}\d{4}$/); // Swedish ID-number
+const cardNumberRegEx = new RegExp(/^5[1-5][0-9]{14}$/); // MasterCard
+
+// Default payment method
+let selectedPaymentMethod = "card";
+
+// Add event listeners
+const inputs = [cardNumber, cardYear, cardMonth, cardCvc, personalId];
+
+inputs.forEach(input => {
+    input.addEventListener("focusout", activateOrderButton)
+    input.addEventListener("change", activateOrderButton);
+});
+
+// Switch payment method
+const radios = Array.from(document.querySelectorAll('input[name="payment-option"]'));
+
+radios.forEach(radioButton => {
+    radioButton.addEventListener("change", switchPaymentMethod);
+});
+
+/**
+ * Switches between payment method.
+ * Toggles visability of input fields.
+ * @param {Event} e Event triggered by selecting payment method
+ */
+function switchPaymentMethod(e) { 
+    invoiceOption.classList.toggle("hidden");
+    cardOption.classList.toggle("hidden");
+    selectedPaymentMethod = e.target.value; // Update selected method
+};
+
+
+function isPersonalIdValid() {
+    return personalIdRegEx.exec(personalId.value);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                Order Button                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Validates user input in payment form.
+ * Enable order button if input field is correctly filled.
+ * @returns
+ */
+function activateOrderButton() {
+    orderButton.setAttribute('disabled', ''); // note to self: utgå alltid att något går från incorrekt till correkt
+    
+    if (selectedPaymentMethod === "invoice" && !isPersonalIdValid()) {
+        return;
+    }
+
+    if (selectedPaymentMethod === "card") {
+
+        // Check number
+        if (cardNumberRegEx.exec(cardNumber.value) === null) {
+            console.warn("Number not valid.");
+            return;
+        }
+        
+        // Check year
+        const today = new Date();
+        let year = Number(cardYear.value);
+        const validYear = Number(String(today.getFullYear()).substring(2));
+    
+        if (year > validYear + 2 || year < validYear) {
+          console.warn("Year not valid.");
+          return;
+        }
+
+        // Check month
+        let month = cardMonth.value.padStart(2, "0");
+        
+        if (Number(month) < 1 || Number(month) > 12) {
+            console.warn("Month not valid.")
+            return;
+        }
+
+        // Check CVC
+        if (cardCvc.value.length !== 3) {
+          console.warn("CVC not valid.");
+          return;
+        }
+    }
+
+    orderButton.removeAttribute('disabled');
+}
+
