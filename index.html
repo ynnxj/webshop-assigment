@@ -1,11 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
+    <title>Peepee Poopoos Korvar</title>
+
     <meta charset="UTF-8" />
-    <title>Peepee Poopoos Webbshop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-witdh, initial-scale=1">
+    <meta name="keywords" content="Några keywords här">
+    <meta property="og:title" content="Peepee Poopoos Korvar | Webbshop">
+    <meta property="og:description" content="En beskrivning här">
+    <meta property="og:image" content="#">
+    <meta property="og:url" content="#">
+
+    <!-- Fonts, Icons & Stylesheets -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=star" />
     <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
+
 <body>
     <main>
         <header>
@@ -18,14 +29,15 @@
 
         <h1>Peepee Poopoos Korvar</h1>  
 
-        <div class="page-1">
+        <!-- Products Page -->
+        <section class="page-1">
 
             <div class="sort-by">
-                <span>Sort by:</span>
-                <button class="name">Name</button>
-                <button class="price">Price</button>
-                <button class="rating">Rating</button>
-                <button class="category">Category</button>
+                <span>Sortera efter:</span>
+                <button class="name">Namn</button>
+                <button class="price">Pris</button>
+                <button class="rating">Betyg</button>
+                <button class="category">Kategori</button>
             </div>
             
             <section>
@@ -33,7 +45,54 @@
                 <div id="products-list"></div>
             </section>
 
-        </div>
+        </section>
+
+        <!-- Payment Page -->
+        <section class="page-2">
+
+            <div class="payment-options">
+                <div class="selector">
+                    <label>
+                        <input type="radio" name="payment-option" value="invoice">
+                        <span>Faktura</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="payment-option" value="card" checked>
+                        <span>Kort</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Invoice Method -->
+            <div class="invoice hidden" id="invoice">
+                <label>
+                    <span>Personnummer</span>
+                    <input type="text" name="personal-id" id="personal-id" value="19850505-1234">
+                </label>
+            </div>
+
+            <!-- Card Method -->
+            <div class="card" id="card">
+                <label>
+                    <span>Kortnummer</span>
+                    <input id="card-number" type="number" value="5100080000000000">
+                </label>
+                <label>
+                    <span>Datum</span>
+                    <span>
+                        <input id="card-year" type="number" class="small" placeholder="YY">/
+                        <input id="card-month" type="number" class="small" placeholder="MM">
+                    </span>
+                </label>
+                <label>
+                    <span>CVC</span>
+                    <input id="card-cvc" type="number" placeholder="123">
+                </label>
+            </div>
+
+            <button id="order-button" disabled>Beställ</button>
+
+        </section>
     </main>
     <script src="script.js"></script>
 </body>
