@@ -1,3 +1,14 @@
+/**
+ * 🦄 Hej Jenni, inget specifikt så men:
+ * Hittils har jag svårt att på egen hand veta vad/hur jag 
+ * bör koda för att uppnå det jag vill göra.
+ * Efter hjälp från olika källor kan jag förstå logiken bakom en kod, 
+ * men om någon skulle be mig utföra något utantill skulle jag se ut såhär: ??(' o__o) ???
+ * 
+ * Är detta normalt och kan jag forsätta "trust the process"
+ * eller borde jag vara liiite orolig och fokusera mer på repition?
+ * Känner mig lite av en "fraud" när jag liksom kopierat din kod...
+ */
 
 /* -------------------------------------------------------------------------- */
 /*                          OBJECT ARRAY OF PRODUCTS                          */
@@ -144,7 +155,7 @@ const products = [
         alt: "En pin-knapp med Peepee Poopoo på"
         },
     },    
-];
+]
 
 const productsListDiv = document.querySelector("#products-list");
 const cart = document.querySelector("#cart-summary");
@@ -189,7 +200,7 @@ function printProductsList() {
     cartButtons.forEach(button => {
         button.addEventListener("click", handleAddToCart);
     });
-};
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -220,7 +231,7 @@ function sortByButton(e) {
         products.sort((product1, product2) => product1.category.localeCompare(product2.category));
     }
     printProductsList();
-};
+}
 printProductsList();
 
 /* -------------------------------------------------------------------------- */
@@ -243,7 +254,7 @@ function adjustQuantity(e) {
         products[foundProduct].amount = Math.max(0, products[foundProduct].amount - 1);
     }
     document.querySelector(`#input-${productId}`).value = products[foundProduct].amount; // Print products
-};
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                SHOPPING CART                               */
@@ -269,7 +280,7 @@ function updateAndPrintCart() {
     // Display the subtotal
     const subTotal = purchasedProducts.reduce((sum, product) => sum + (product.cartAmount * product.price), 0);
     cart.innerHTML += `<p>Delsumma: ${subTotal} kr</p>`;
-};
+}
 
 /**
  * Moves selected product amount to cart.
@@ -306,13 +317,13 @@ function getRatingHtml(rating) {
         html += `<span class="material-symbols-outlined">star</span>`;
     }
     return html;
-};
+}
 
 /* -------------------------------------------------------------------------- */
-/*                               Payment Options                              */
+/*                               PAYMENT OPTIONS                              */
 /* -------------------------------------------------------------------------- */
 
-// note to self: går inte att tabba mellan faktura och kort...
+// note to self: FIXA att man kan tabba korrekt, verkar ej funka helt
 
 const personalId = document.querySelector("#personal-id");
 const cardNumber = document.querySelector("#card-number");
@@ -337,7 +348,7 @@ let selectedPaymentMethod = "card";
 const inputs = [cardNumber, cardYear, cardMonth, cardCvc, personalId];
 
 inputs.forEach(input => {
-    input.addEventListener("focusout", activateOrderButton)
+    input.addEventListener("focusout", activateOrderButton);
     input.addEventListener("change", activateOrderButton);
 });
 
@@ -357,7 +368,7 @@ function switchPaymentMethod(e) {
     invoiceOption.classList.toggle("hidden");
     cardOption.classList.toggle("hidden");
     selectedPaymentMethod = e.target.value; // Update selected method
-};
+}
 
 
 function isPersonalIdValid() {
@@ -365,7 +376,7 @@ function isPersonalIdValid() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                Order Button                                */
+/*                                ORDER BUTTON                                */
 /* -------------------------------------------------------------------------- */
 
 /**
@@ -374,7 +385,7 @@ function isPersonalIdValid() {
  * @returns
  */
 function activateOrderButton() {
-    orderButton.setAttribute('disabled', ''); // note to self: utgå alltid att något går från incorrekt till correkt
+    orderButton.setAttribute('disabled', '');
     
     if (selectedPaymentMethod === "invoice" && !isPersonalIdValid()) {
         return;
@@ -402,7 +413,7 @@ function activateOrderButton() {
         let month = cardMonth.value.padStart(2, "0");
         
         if (Number(month) < 1 || Number(month) > 12) {
-            console.warn("Month not valid.")
+            console.warn("Month not valid.");
             return;
         }
 
