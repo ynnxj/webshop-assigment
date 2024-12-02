@@ -16,3 +16,17 @@ img {
 .hidden {
   display: none;
 }
+
+.check-out {
+  border: 2px solid black;
+
+  li {
+    list-style: none;
+  }
+
+  .cart-info, .checkout-products {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr; 
+    border-bottom: 2px solid black;
+  }
+}

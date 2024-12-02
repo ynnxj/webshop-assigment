@@ -1,3 +1,8 @@
 .product {
     border-bottom: 2px solid green;
   }
+
+  .cart-info, .checkout-products {
+    grid-template-columns: 4fr 1fr 1fr 2fr;
+  }
+
