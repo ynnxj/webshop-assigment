@@ -298,6 +298,7 @@ function handleAddToCart(e) {
 
         document.querySelector(`#input-${productId}`).value = product.amount;
         updateAndPrintCart();
+        updateCheckoutPage()
     }
 }
 
@@ -318,6 +319,38 @@ function getRatingHtml(rating) {
     }
     return html;
 }
+
+
+/* -------------------------------------------------------------------------- */
+/*                            CHECKOUT CART SUMMARY                           */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Creates HTML for products added in checkout cart.
+ */
+function updateCheckoutPage() {
+    const purchasedProducts = products.filter((product) => product.cartAmount > 0);
+    const productsInCart = document.querySelector("#checkout-cart");
+
+    productsInCart.innerHTML = ""; // Clear existing html
+
+    purchasedProducts.forEach(product => {
+        productsInCart.innerHTML += `
+            <li class="checkout-products">
+                <span>${product.name}</span>
+                <span>${product.cartAmount}</span>
+                <span>${product.price} kr</span>
+                <span>${product.cartAmount * product.price} kr</span>
+            </li>`;
+    });
+
+    const subTotal = purchasedProducts.reduce((sum, product) => sum + (product.cartAmount * product.price), 0);
+    productsInCart.innerHTML += `
+    <li>
+        <span>Totalt: ${subTotal} kr</span>
+    </li>`;
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*                               PAYMENT OPTIONS                              */
@@ -379,6 +412,8 @@ function isPersonalIdValid() {
 /*                                ORDER BUTTON                                */
 /* -------------------------------------------------------------------------- */
 
+// note to self: FIXA att man även behöver minst en produkt i varukorgen
+
 /**
  * Validates user input in payment form.
  * Enable order button if input field is correctly filled.
@@ -426,4 +461,3 @@ function activateOrderButton() {
 
     orderButton.removeAttribute('disabled');
 }
-
