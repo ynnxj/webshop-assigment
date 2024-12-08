@@ -1,14 +1,3 @@
-/**
- * 🦄 Hej Jenni, inget specifikt så men:
- * Hittils har jag svårt att på egen hand veta vad/hur jag 
- * bör koda för att uppnå det jag vill göra.
- * Efter hjälp från olika källor kan jag förstå logiken bakom en kod, 
- * men om någon skulle be mig utföra något utantill skulle jag se ut såhär: ??(' o__o) ???
- * 
- * Är detta normalt och kan jag forsätta "trust the process"
- * eller borde jag vara liiite orolig och fokusera mer på repition?
- * Känner mig lite av en "fraud" när jag liksom kopierat din kod...
- */
 
 /* -------------------------------------------------------------------------- */
 /*                          OBJECT ARRAY OF PRODUCTS                          */
@@ -167,17 +156,24 @@ const cart = document.querySelector("#cart-summary");
 
 /**
  * Prints all products on the page.
+ * Prints different prices on weekdays vs weekends.
  * Creates HTML for each product.
  * Adds even listeners for plus, minus and add to cart buttons.
  */
 function printProductsList() {
     productsListDiv.innerHTML = ""; // Clear the existing product list
+    const weekend = isWeekend();
 
     products.forEach(product => {
+        
+        // note to self: condition ? valueIfTrue : valueIfFalse;
+        // note to self: .toFixed(2) formeterar ett tal till en sträng med ett fast antal decimaler, i detta fall 2.
+        const displayPrice = weekend ? (product.price * 1.15).toFixed(2) : product.price.toFixed(2);
+
         productsListDiv.innerHTML += `
         <article class="product">
             <h3>${product.name}</h3>
-            <p>${product.price} kr</p>
+            <p>${displayPrice} kr</p>
             <p>Betyg: ${getRatingHtml(product.rating)}</p>
             <img src="${product.img.url}" alt="${product.img.alt}">
             <div>
@@ -200,6 +196,39 @@ function printProductsList() {
     cartButtons.forEach(button => {
         button.addEventListener("click", handleAddToCart);
     });
+}
+
+/**
+ * Checks if today's date and time is between
+ * friday 3pm and monday 3am.
+ * @returns 
+ */
+function isWeekend() {
+    const now = new Date();
+    const day = now.getDay(); // note to self: 0 är söndag, 1 är måndag, osv
+    const hour = now.getHours();
+
+    // Friday after 3pm
+    if (day === 5 && hour >= 15) {
+        return true;
+
+    // Saturday
+    }
+    if (day === 6) {
+        return true;
+    }
+
+    // Sunday
+    if (day === 0) {
+        return true;
+    }
+
+    // Monday before 3am
+    if (day === 1 && hour < 3) {
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -234,6 +263,7 @@ function sortByButton(e) {
 }
 printProductsList();
 
+
 /* -------------------------------------------------------------------------- */
 /*                            ADD PRODUCTS TO CART                            */
 /* -------------------------------------------------------------------------- */
@@ -256,31 +286,10 @@ function adjustQuantity(e) {
     document.querySelector(`#input-${productId}`).value = products[foundProduct].amount; // Print products
 }
 
+
 /* -------------------------------------------------------------------------- */
 /*                                SHOPPING CART                               */
 /* -------------------------------------------------------------------------- */
-
-/**
- * Filters out products with a cart amount of 0.
- * Clears the cart display on page.
- * Lists each product in the card with its quantity and total price.
- * Calculates and display the subtotal of the cart content.
- */
-function updateAndPrintCart() {
-    const purchasedProducts = products.filter((product) => product.cartAmount > 0);
-    cart.innerHTML = ""; // Clears the div ("Din varukorg är tom.")
-
-    purchasedProducts.forEach(product => {
-        cart.innerHTML += 
-        `<div>
-            ${product.name}: ${product.cartAmount}st - ${product.cartAmount * product.price} kr
-        </div>`;
-    });
-
-    // Display the subtotal
-    const subTotal = purchasedProducts.reduce((sum, product) => sum + (product.cartAmount * product.price), 0);
-    cart.innerHTML += `<p>Delsumma: ${subTotal} kr</p>`;
-}
 
 /**
  * Moves selected product amount to cart.
@@ -298,8 +307,51 @@ function handleAddToCart(e) {
 
         document.querySelector(`#input-${productId}`).value = product.amount;
         updateAndPrintCart();
-        updateCheckoutPage()
+        updateCheckoutPage();
     }
+}
+
+/**
+ * Filters out products with a cart amount of 0.
+ * Clears the cart display on page.
+ * Lists each product in the card with its quantity and total price.
+ * Calculates and display the subtotal of the cart content.
+ */
+function updateAndPrintCart() {
+    const purchasedProducts = products.filter((product) => product.cartAmount > 0);
+    cart.innerHTML = ""; // Clears the div ("Din varukorg är tom.")
+
+    let subTotal = 0;
+    let totalQuantity = 0;
+
+    purchasedProducts.forEach(product => {
+        let finalPrice = product.price;
+
+        // 10% off if more than 10+ of same product in cart
+        if (product.cartAmount >= 10) {
+            finalPrice = product.price * 0.9; 
+        }
+
+        const totalProductPrice = finalPrice * product.cartAmount;
+        subTotal += totalProductPrice;
+        totalQuantity += product.cartAmount; // Update total quantity
+
+        cart.innerHTML += 
+        `<div>
+            ${product.name}: ${product.cartAmount} st - ${totalProductPrice.toFixed(2)} kr
+        </div>`;
+    });
+
+    // Calculate the shipping cost
+    const shippingCost = calculateShippingCost(subTotal, totalQuantity);
+
+    // Display the subtotal and shipping cost
+    cart.innerHTML += `<p>Delsumma: ${subTotal.toFixed(2)} kr</p>`;
+    cart.innerHTML += `<p>Frakt: ${shippingCost.toFixed(2)} kr</p>`;
+
+    const totalWithShipping = subTotal + shippingCost;
+
+    cart.innerHTML += `<p>Totalt: ${totalWithShipping.toFixed(2)} kr</p>`;
 }
 
 
@@ -322,33 +374,111 @@ function getRatingHtml(rating) {
 
 
 /* -------------------------------------------------------------------------- */
-/*                            CHECKOUT CART SUMMARY                           */
+/*                       CHECKOUT SUMMARY AND DISCOUNTS                       */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Creates HTML for products added in checkout cart.
+ * Checks in today's date is monday.
+ * Checks if time is before 10am.
+ * Adds discount if true.
+ * @param {*} subTotal
+ * @returns 
+ */
+function mondayDiscount(subTotal) {
+    const now = new Date();
+    const monday = now.getDay() === 1; // note to self: 1 = måndag
+    const before10Am = now.getHours() < 10; // note to self: innan 10:00
+
+    if (monday && before10Am) {
+        const discount = subTotal * 0.10; // note to self: 10% rabatt
+        return discount;
+    }
+    return 0;
+}
+
+/**
+ * Adds 10% discount for 10 of the same product in cart.
+ * Adds 25 kr shipping cost.
+ * Free shipping when 15+ products in cart.
+ * Calculates the sum based on discounts and shipping.
+ * Creates HTML for products and total sum added in checkout cart.
  */
 function updateCheckoutPage() {
     const purchasedProducts = products.filter((product) => product.cartAmount > 0);
     const productsInCart = document.querySelector("#checkout-cart");
 
-    productsInCart.innerHTML = ""; // Clear existing html
+    productsInCart.innerHTML = ""; // Clear existing html ("Din varukorg är tom.")
+
+    let subTotal = 0;
+    let totalQuantity = 0;
 
     purchasedProducts.forEach(product => {
+        let finalPrice = product.price; 
+
+        // Apply 10% discount if 10+ of same product
+        if (product.cartAmount >= 10) {
+            finalPrice = product.price * 0.9;
+        }
+
+        const totalProductPrice = finalPrice * product.cartAmount;
+        subTotal += totalProductPrice;
+        totalQuantity += product.cartAmount;
+
         productsInCart.innerHTML += `
             <li class="checkout-products">
                 <span>${product.name}</span>
                 <span>${product.cartAmount}</span>
-                <span>${product.price} kr</span>
-                <span>${product.cartAmount * product.price} kr</span>
+                <span>${finalPrice.toFixed(2)} kr</span>
+                <span>${totalProductPrice.toFixed(2)} kr</span>
             </li>`;
     });
 
-    const subTotal = purchasedProducts.reduce((sum, product) => sum + (product.cartAmount * product.price), 0);
+    // Calculate the shipping cost
+    const shippingCost = calculateShippingCost(subTotal, totalQuantity);
+
+    // Calculate subtotal
+    const discount = mondayDiscount(subTotal);
+    const totalWithDiscount = subTotal - discount;
+    const totalWithShipping = totalWithDiscount + shippingCost;
+
     productsInCart.innerHTML += `
     <li>
-        <span>Totalt: ${subTotal} kr</span>
+        <span>Delsumma: ${subTotal.toFixed(2)} kr</span>
     </li>`;
+
+    if (discount > 0) { // note to self: Om discount är 1 = true?? 
+        productsInCart.innerHTML += `
+        <li>
+            <span>Måndagsrabatt: -${discount.toFixed(2)} kr</span>
+        </li>`
+    }
+
+    productsInCart.innerHTML += `
+    <li>
+        <span>Frakt: ${shippingCost.toFixed(2)} kr</span>
+    </li>`;
+
+    productsInCart.innerHTML += `
+    <li>
+        <span>Totalt: ${totalWithShipping.toFixed(2)} kr</span>
+    </li>`;
+}
+
+/**
+ * Calculates shipping cost based on cart content.
+ * Free shipping when 15+ products in cart.
+ * 25 standard shipping.
+ * @param {number} subTotal 
+ * @param {number} totalQuantity 
+ * @returns Shipping cost
+ */
+function calculateShippingCost(subTotal, totalQuantity) {
+    if (totalQuantity >= 15) {
+        return 0; // Free shipping if 15+ products in cart
+    }
+    else {
+        return 25; // 25 kr shipping cost
+    }
 }
 
 
@@ -356,29 +486,36 @@ function updateCheckoutPage() {
 /*                               PAYMENT OPTIONS                              */
 /* -------------------------------------------------------------------------- */
 
-// note to self: FIXA att man kan tabba korrekt, verkar ej funka helt
+// Elements for customer input
+const firstName = document.querySelector("#first-name");
+const lastName = document.querySelector("#last-name");
+const postalAddress = document.querySelector("#postal-address");
+const postalCode = document.querySelector("#postal-code");
+const postalTown = document.querySelector("#postal-town");
+const phone = document.querySelector("#phone-number");
+const email = document.querySelector("#email-address");
 
+// Elements for invoice and card
 const personalId = document.querySelector("#personal-id");
 const cardNumber = document.querySelector("#card-number");
 const cardYear = document.querySelector("#card-year");
 const cardMonth = document.querySelector("#card-month");
 const cardCvc = document.querySelector("#card-cvc");
 
-
 // Elements for toggling payment options
 const invoiceOption = document.querySelector("#invoice");
 const cardOption = document.querySelector("#card");
+
+// Order Button
 const orderButton = document.querySelector("#order-button")
 
-// RegEx
-const personalIdRegEx = new RegExp(/^\d{6,8}[-|(\s)]{0,1}\d{4}$/); // Swedish ID-number
-const cardNumberRegEx = new RegExp(/^5[1-5][0-9]{14}$/); // MasterCard
 
 // Default payment method
 let selectedPaymentMethod = "card";
 
 // Add event listeners
-const inputs = [cardNumber, cardYear, cardMonth, cardCvc, personalId];
+const inputs = [firstName, lastName, postalAddress, postalCode, postalTown, phone, email, 
+    cardNumber, cardYear, cardMonth, cardCvc, personalId];
 
 inputs.forEach(input => {
     input.addEventListener("focusout", activateOrderButton);
@@ -404,37 +541,96 @@ function switchPaymentMethod(e) {
 }
 
 
+
+/* -------------------------------------------------------------------------- */
+/*                  CONDITIONS FOR ORDER BUTTON AVAILABILITY                  */
+/* -------------------------------------------------------------------------- */
+
+// RegEx
+const personalIdRegEx = new RegExp(/^\d{6,8}[-|(\s)]{0,1}\d{4}$/); // Swedish ID-number
+const cardNumberRegEx = new RegExp(/^5[1-5][0-9]{14}$/); // MasterCard
+const postalAddressRegEx = new RegExp(/^[A-Za-zÅÄÖåäö0-9\s,.-]{3,100}$/); // Swedish Address
+const postalCodeRegEx = new RegExp(/^\d{3}\s?\d{2}$/); // Swedish Postal code
+const phoneNumberRegEx = new RegExp(/^((\+|00)46|0)7[02369][0-9]{7}$/); // Swedish Phonenumber
+
+/**
+ * Match RegEx with personal ID
+ * @returns 
+ */
 function isPersonalIdValid() {
     return personalIdRegEx.exec(personalId.value);
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                ORDER BUTTON                                */
-/* -------------------------------------------------------------------------- */
-
-// note to self: FIXA att man även behöver minst en produkt i varukorgen
+/**
+ * Filters products with cartAmount bigger than 0.
+ * Calculates the total amount in cart.
+ * @returns
+ */
+function calculateTotalAmount() {
+    const purchasedProducts = products.filter(product => product.cartAmount > 0);
+    return purchasedProducts.reduce((total, product) => total + product.cartAmount * product.price, 0);
+}
 
 /**
  * Validates user input in payment form.
- * Enable order button if input field is correctly filled.
+ * Enable order button if input field is correctly filled
+ * and there is atleast one product in cart.
+ * Disable invoice as an option if total sum exceeds 800.
  * @returns
  */
 function activateOrderButton() {
-    orderButton.setAttribute('disabled', '');
-    
-    if (selectedPaymentMethod === "invoice" && !isPersonalIdValid()) {
+    const totalAmount = calculateTotalAmount();  // Get the total amount in the cart
+    const hasProductsInCart = products.some(product => product.cartAmount > 0);
+    const invoiceRadio = document.querySelector('input[value="invoice"]'); // Invoice radio button
+
+    orderButton.setAttribute("disabled", ""); // Disable order button by default
+
+    // Check products in cart
+    if (!hasProductsInCart) {
+        console.warn("Cart empty.");
         return;
     }
 
-    if (selectedPaymentMethod === "card") {
+    // Check customer info
+    if (!firstName || !lastName.value || !postalAddress.value || 
+        !postalCode.value || !postalTown.value || !phone.value || !email.value) {
+        console.warn("All customer info fields must be filled.");
+        return;
+    }
+
+    // Check postal code
+    if (postalCodeRegEx.exec(postalCode.value) === null) {
+        console.warn("Enter valid postal code.");
+        return;
+    }
+
+    // Disable invoice option if sum exceeds 800 kr
+    if (totalAmount > 800) {
+        invoiceRadio.disabled = true; 
+    } else {
+        invoiceRadio.disabled = false;
+    }
+
+    // Invoice validation
+    if (selectedPaymentMethod === "invoice") {
+
+        // Check personal ID number
+        if (!isPersonalIdValid()) {
+            console.warn("Personal ID is not valid.");
+            return;
+        }
+    }
+
+    // Card validation
+    else if (selectedPaymentMethod === "card") {
 
         // Check number
         if (cardNumberRegEx.exec(cardNumber.value) === null) {
-            console.warn("Number not valid.");
+            console.warn("Card number is not valid.");
             return;
         }
         
-        // Check year
+        // Check expiration year
         const today = new Date();
         let year = Number(cardYear.value);
         const validYear = Number(String(today.getFullYear()).substring(2));
@@ -444,9 +640,8 @@ function activateOrderButton() {
           return;
         }
 
-        // Check month
+        // Check expiration month
         let month = cardMonth.value.padStart(2, "0");
-        
         if (Number(month) < 1 || Number(month) > 12) {
             console.warn("Month not valid.");
             return;
@@ -459,5 +654,6 @@ function activateOrderButton() {
         }
     }
 
-    orderButton.removeAttribute('disabled');
+    orderButton.removeAttribute("disabled"); // Enable order button if everything is correct
 }
+
