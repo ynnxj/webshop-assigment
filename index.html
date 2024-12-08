@@ -51,10 +51,10 @@
 
         </section>
 
-        <!-- Check out & Payment Page -->
+        <!-- Checkout & Payment Page -->
         <section class="page-2">
 
-            <!-- Checkout Cart-->
+            <!-- Cart Summary -->
             <div class="check-out">
 
                 <div class="cart-info">
@@ -70,49 +70,90 @@
 
             </div>
 
-            <!-- Payment Options-->
-            <div class="payment-options">
-                <div class="selector">
+            <!-- Checkout Form -->
+             <form>
+
+                <!-- Customer Info -->
+                <div class="customer-data" id="customer-data">
                     <label>
-                        <input type="radio" name="payment-option" value="invoice">
-                        <span>Faktura</span>
+                        <span>Förnamn</span>
+                        <input id="first-name" type="text" placeholder="Förnamn" autocomplete="given-name" required>
                     </label>
                     <label>
-                        <input type="radio" name="payment-option" value="card" checked>
-                        <span>Kort</span>
+                        <span>Efternamn</span>
+                        <input id="last-name" type="text" placeholder="Efternamn" autocomplete="family-name" required>
+                    </label>
+                    <label>
+                        <span>Adress</span>
+                        <input id="postal-address" type="text" placeholder="Gatuadress" autocomplete="street-address" required>
+                    </label>
+                    <label>
+                        <span>Postnummer</span>
+                        <input id="postal-code" type="text" placeholder="123 45" autocomplete="postal-code" required>
+                    </label>
+                    <label>
+                        <span>Postort</span>
+                        <input id="postal-town" type="text" placeholder="Postort" required>
+                    </label>
+                    <label>
+                        <span>Ev. Portkod</span>
+                        <input id="entry-code" type="number" placeholder="1234">
+                    </label>
+                    <label>
+                        <span>Telefon (mobil)</span>
+                        <input id="phone-number" type="tel" placeholder="Mobilnummer" required>
+                    </label>
+                    <label>
+                        <span>E-post</span>
+                        <input id="email-address" type="email" placeholder="E-postadress" autocomplete="email" required>
                     </label>
                 </div>
-            </div>
 
-            <!-- Invoice Method -->
-            <div class="invoice hidden" id="invoice">
-                <label>
-                    <span>Personnummer</span>
-                    <input type="text" name="personal-id" id="personal-id" value="19850505-1234">
-                </label>
-            </div>
+                <!-- Payment Options-->
+                <div class="payment-options">
+                    <div class="selector">
+                        <label>
+                            <input type="radio" name="payment-option" value="invoice">
+                            <span>Faktura</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="payment-option" value="card" checked>
+                            <span>Kort</span>
+                        </label>
+                    </div>
+                </div>
 
-            <!-- Card Method -->
-            <div class="card" id="card">
-                <label>
-                    <span>Kortnummer</span>
-                    <input id="card-number" type="number" value="5100080000000000">
-                </label>
-                <label>
-                    <span>Datum</span>
-                    <span>
-                        <input id="card-year" type="number" class="small" placeholder="YY">/
-                        <input id="card-month" type="number" class="small" placeholder="MM">
-                    </span>
-                </label>
-                <label>
-                    <span>CVC</span>
-                    <input id="card-cvc" type="number" placeholder="123">
-                </label>
-            </div>
+                <!-- Invoice Method -->
+                <div class="invoice hidden" id="invoice">
+                    <label>
+                        <span>Personnummer</span>
+                        <input type="text" name="personal-id" id="personal-id" value="19850505-1234">
+                    </label>
+                </div>
 
-            <button id="order-button" disabled>Beställ</button>
+                <!-- Card Method -->
+                <div class="card" id="card">
+                    <label>
+                        <span>Kortnummer</span>
+                        <input id="card-number" type="number" value="5100080000000000">
+                    </label>
+                    <label>
+                        <span>Datum</span>
+                        <span>
+                            <input id="card-year" type="number" class="small" placeholder="YY" value="25">/
+                            <input id="card-month" type="number" class="small" placeholder="MM" value="12">
+                        </span>
+                    </label>
+                    <label>
+                        <span>CVC</span>
+                        <input id="card-cvc" type="number" placeholder="123" autocomplete="cc-csc">
+                    </label>
+                </div>
 
+                <button id="order-button" disabled>Beställ</button>
+                <input type="reset" value="Rensa">
+
+            </form>
         </section>
     </main>
     <script src="script.js"></script>
