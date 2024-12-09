@@ -291,6 +291,15 @@ function adjustQuantity(e) {
 /*                                SHOPPING CART                               */
 /* -------------------------------------------------------------------------- */
 
+// Hide/show preview cart w/ cart icon click
+const cartIcon = document.querySelector("#cart-icon");
+const previewCart = document.querySelector("#preview-cart");
+
+cartIcon.addEventListener("click", () => {
+    previewCart.classList.toggle("hidden");
+});
+
+
 /**
  * Moves selected product amount to cart.
  * Resets the selected amount.
@@ -352,8 +361,22 @@ function updateAndPrintCart() {
     const totalWithShipping = subTotal + shippingCost;
 
     cart.innerHTML += `<p>Totalt: ${totalWithShipping.toFixed(2)} kr</p>`;
-}
 
+    // To-checkout button
+    previewCart.innerHTML += 
+    `<button id="to-checkout-button" class="to-checkout-button">
+        Till Varukorgen
+    </button>`;
+
+    const toCheckoutButton = document.querySelector("#to-checkout-button");
+
+    toCheckoutButton.addEventListener("click", function() {
+        const checkoutPage = document.querySelector("#checkout-section"); // note to self: ÄNDRA DETTA
+        checkoutPage.scrollIntoView({
+            behavior: "smooth"
+        });
+    });
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                RATING SYSTEM                               */
