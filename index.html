@@ -19,16 +19,21 @@
 
 <body>
     <main>
+        
         <!-- Header -->
         <header>
-            <!-- Tillfällig reset-knapp -->
-            <button>
-                <a href="index.html">///</a>
+
+            <button id="cart-icon">
+                <span>///</span>
             </button>
-            <div class="cart">
-                <p>Varukorg</p>
-                <div id="cart-summary">Din varukorg är tom.</div>
+            
+            <div id="preview-cart" class="hidden">
+                <div id="cart-summary">
+                    Din varukorg är tom.
+                </div>
             </div>
+            
+
         </header>
 
         <h1>Peepee Poopoos Korvar</h1>  
@@ -52,7 +57,7 @@
         </section>
 
         <!-- Checkout & Payment Page -->
-        <section class="page-2">
+        <section class="page-2" id="checkout-section">
 
             <!-- Cart Summary -->
             <div class="check-out">
@@ -168,6 +173,12 @@
                 Tiden har gått ut! Din beställning har rensats.
             </div>
 
+        </section>
+
+        <section id="order-confirmation" class="order-confirmation">
+            <div>
+                
+            </div>
         </section>
     </main>
     <script src="script.js"></script>
