@@ -211,9 +211,9 @@ function isWeekend() {
     // Friday after 3pm
     if (day === 5 && hour >= 15) {
         return true;
-
-    // Saturday
     }
+    
+    // Saturday
     if (day === 6) {
         return true;
     }
@@ -396,6 +396,8 @@ function mondayDiscount(subTotal) {
     return 0;
 }
 
+const productsInCart = document.querySelector("#checkout-cart");
+
 /**
  * Adds 10% discount for 10 of the same product in cart.
  * Adds 25 kr shipping cost.
@@ -405,7 +407,6 @@ function mondayDiscount(subTotal) {
  */
 function updateCheckoutPage() {
     const purchasedProducts = products.filter((product) => product.cartAmount > 0);
-    const productsInCart = document.querySelector("#checkout-cart");
 
     productsInCart.innerHTML = ""; // Clear existing html ("Din varukorg är tom.")
 
@@ -656,4 +657,52 @@ function activateOrderButton() {
 
     orderButton.removeAttribute("disabled"); // Enable order button if everything is correct
 }
+
+/* -------------------------------------------------------------------------- */
+/*                         FORM TIMER AND RESET BUTTON                        */
+/* -------------------------------------------------------------------------- */
+
+const resetButton = document.querySelector('input[type="reset"]');
+const timeoutMessage = document.querySelector("#timeout-message");
+const formInputs = document.querySelectorAll("form input");
+let timer;
+
+// Resets both preview cart and checkout cart.
+function clearCart() {
+    cart.innerHTML = "Din varukorg är tom."; 
+    productsInCart.innerHTML = "Din varukorg är tom.";
+}
+
+// Restarts the 15 min timer
+function restartTimer() {
+
+    if (timer) { // note to self: om timer har redan ett värde/är en aktiv timer
+        clearTimeout(timer)
+    }
+
+    timer = setTimeout (() => {
+        clearCart();
+
+        // Timeout message visability
+        timeoutMessage.style.display = "block"; // show timeout message
+
+        setTimeout(() => {
+            timeoutMessage.style.display = "none"; // hide timeout message
+        }, 8000); // 8 sec
+
+        resetButton.click();
+
+    }, 900000); // 15 min
+}
+
+// Reset button also clears cart on click
+resetButton.addEventListener('click', function(event) {
+    clearCart();
+});
+
+// Restart timer when there is input changes
+formInputs.forEach(element => {
+    element.addEventListener("input", restartTimer);
+    element.addEventListener("change", restartTimer); 
+});
 
