@@ -68,6 +68,14 @@
                     Din varukorg är tom.
                 </ul>
 
+                                
+                <div class="discount-code">
+                    <label>
+                        <span>Rabattkod:</span>
+                        <input type="text" placeholder="Ange ev. rabattkod">
+                    </label>
+                    <button type="button" id="discount-button">Använd kod</button>
+                </div>
             </div>
 
             <!-- Checkout Form -->
@@ -154,6 +162,12 @@
                 <input type="reset" value="Rensa">
 
             </form>
+
+            <!-- Timeout message -->
+            <div class="timeout-message" id="timeout-message">
+                Tiden har gått ut! Din beställning har rensats.
+            </div>
+
         </section>
     </main>
     <script src="script.js"></script>
