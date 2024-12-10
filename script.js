@@ -729,3 +729,36 @@ formInputs.forEach(element => {
     element.addEventListener("change", restartTimer); 
 });
 
+/* -------------------------------------------------------------------------- */
+/*                           ORDER CONFIRMATION PAGE                          */
+/* -------------------------------------------------------------------------- */
+
+const backButton = document.querySelector("#back-button");
+const orderConfirmationPage = document.querySelector("#order-confirmation");
+const orderSummary = document.querySelector("#order-summary");
+
+
+orderButton.addEventListener('click', function(event) {
+    event.preventDefault(); 
+    orderConfirmationPage.classList.remove("hidden");
+    document.querySelector("form").reset();
+    clearCart();
+
+    orderSummary.innerHTML += `<h4>Beställda varor</h4>`
+
+    products.forEach(product => {
+    if (product.cartAmount > 0) { // Endast produkter som har beställts
+        orderSummary.innerHTML += `
+            <li class="checkout-products">
+                <span>${product.name}</span>
+                <span>${product.cartAmount}</span>
+            </li>`;
+        }
+    });
+});
+
+backButton.addEventListener('click', function() {
+    window.scrollTo(0, 0);
+    location.reload();
+});
+
