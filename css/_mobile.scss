@@ -9,6 +9,10 @@ img {
   display: block;
 }
 
+li {
+  list-style: none;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 10;
 }
@@ -19,10 +23,6 @@ img {
 
 .check-out {
   border: 2px solid black;
-
-  li {
-    list-style: none;
-  }
 
   .cart-info, .checkout-products {
     display: grid;
