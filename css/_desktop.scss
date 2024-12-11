@@ -1,8 +1,36 @@
-.product {
-    border-bottom: 2px solid green;
-  }
 
+// Product List
+.products-list {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.check-out {
   .cart-info, .checkout-products {
     grid-template-columns: 4fr 1fr 1fr 2fr;
+    text-align: left;
   }
 
+  .discount-code {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+
+    label {
+      display: block;
+    }
+
+    button, input {
+      padding: 5px;
+    }
+  }
+}
+
+// Form
+form {
+  flex-direction: row;
+
+  .payment-info {
+    max-width: 500px;
+  }  
+}

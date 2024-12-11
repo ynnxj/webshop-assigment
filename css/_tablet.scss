@@ -1,4 +1,20 @@
-.product {
-    border-bottom: 2px solid red;
-  }
+
+// Product List
+.products-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+}
+
+// Product Page and Checkout Page
+.products-section, .checkout-section {
+    margin-left: 35px;
+    margin-right: 35px;
+    margin-bottom: 70px;
+}
+
+// Form
+.payment-buttons {
+  text-align: right;
+}
   
