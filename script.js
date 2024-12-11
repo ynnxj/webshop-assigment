@@ -166,6 +166,15 @@ document.querySelector(".home-button").addEventListener("click", function () {
     });
 });
 
+function updateCartBadge() {
+    const totalQuantity = products.reduce((total, product) => total + (product.cartAmount || 0), 0);
+    const badge = document.getElementById("cart-badge");
+  
+    if (totalQuantity > 0) {
+      badge.textContent = totalQuantity; // Update number
+    } 
+  }
+
 /* -------------------------------------------------------------------------- */
 /*                              DARK MODE TOGGLE                              */
 /* -------------------------------------------------------------------------- */
@@ -327,7 +336,9 @@ function adjustQuantity(e) {
     } else if (e.target.classList.contains("subtract")) {
         products[foundProduct].amount = Math.max(0, products[foundProduct].amount - 1);
     }
+    
     document.querySelector(`#input-${productId}`).value = products[foundProduct].amount; // Print products
+    updateCartBadge();
 }
 
 
@@ -361,6 +372,7 @@ function handleAddToCart(e) {
         document.querySelector(`#input-${productId}`).value = product.amount;
         updateAndPrintCart();
         updateCheckoutPage();
+        updateCartBadge();
     }
 }
 
@@ -818,4 +830,5 @@ backButton.addEventListener('click', function() {
 
     document.body.classList.remove("order-confirmation-active");
 });
+
 
