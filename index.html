@@ -33,7 +33,7 @@
                 <!-- Nav buttons & Preview Cart -->
                 <div class="nav-buttons">
 
-                    <button class="material-symbols-outlined dark-button" id="darkModeToggle">dark_mode</button>
+                    <button aria-label="dark and light mode button" class="material-symbols-outlined dark-button" id="darkModeToggle">dark_mode</button>
 
                     <button aria-label="home icon button" id="home-button" class="home-button">
                         <span class="material-symbols-outlined">home</span>
@@ -42,7 +42,8 @@
                     <div class="cart-container">
 
                         <button aria-label="shopping cart icon button" id="cart-icon" class="cart-icon">
-                            <span class="material-symbols-outlined">shopping_bag</span>
+                            <span class="material-symbols-outlined">
+                                <span id="cart-badge" class="cart-badge">0</span>shopping_bag</span>
                         </button>
                     
                         <div id="preview-cart" class="cart-dropdown hidden">
