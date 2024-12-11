@@ -146,13 +146,32 @@ const products = [
     },    
 ]
 
-const productsListDiv = document.querySelector("#products-list");
-const cart = document.querySelector("#cart-summary");
+/* -------------------------------------------------------------------------- */
+/*                          ICONS, BUTTONS AND ARROWS                         */
+/* -------------------------------------------------------------------------- */
+
+// Arrow button scrolling down to next section
+document.querySelector(".arrow").addEventListener('click', function () {
+    const nextSection = document.querySelector(".products-section");
+    nextSection.scrollIntoView({
+        behavior: "smooth"
+    });
+});
+
+// Home button going back to top
+document.querySelector(".home-button").addEventListener('click', function () {
+    window.scrollTo({
+        top: 0,
+    });
+});
 
 
 /* -------------------------------------------------------------------------- */
 /*                     DISPLAY PRODUCTS AND SET UP BUTTONS                    */
 /* -------------------------------------------------------------------------- */
+
+const productsListDiv = document.querySelector("#products-list");
+const cart = document.querySelector("#cart-summary");
 
 /**
  * Prints all products on the page.
@@ -166,20 +185,22 @@ function printProductsList() {
 
     products.forEach(product => {
         
-        // note to self: condition ? valueIfTrue : valueIfFalse;
-        // note to self: .toFixed(2) formeterar ett tal till en sträng med ett fast antal decimaler, i detta fall 2.
         const displayPrice = weekend ? (product.price * 1.15).toFixed(2) : product.price.toFixed(2);
 
         productsListDiv.innerHTML += `
         <article class="product">
+            <img src="${product.img.url}" alt="${product.img.alt}">
             <h3>${product.name}</h3>
             <p>${displayPrice} kr</p>
-            <p>Betyg: ${getRatingHtml(product.rating)}</p>
-            <img src="${product.img.url}" alt="${product.img.alt}">
-            <div>
-                <button class="subtract" id="${product.id}">-</button>
-                <input id="input-${product.id}" type="number" value="${product.amount}" min="0">
-                <button class="add" id="${product.id}">+</button>
+            <p class="rating-stars">Betyg: ${getRatingHtml(product.rating)}</p>
+            <div class="quantity-buttons">
+            
+                <div>
+                    <button class="subtract" id="${product.id}">−</button>
+                    <input id="input-${product.id}" type="number" value="${product.amount}" min="0">
+                    <button class="add" id="${product.id}">+</button>
+                <div>
+
                 <button class="add-to-cart" id="cart-${product.id}">Lägg i varukorg</button>
             </div>
         </article>`;
@@ -205,7 +226,7 @@ function printProductsList() {
  */
 function isWeekend() {
     const now = new Date();
-    const day = now.getDay(); // note to self: 0 är söndag, 1 är måndag, osv
+    const day = now.getDay();
     const hour = now.getHours();
 
     // Friday after 3pm
@@ -247,14 +268,14 @@ filterButton.forEach(button => {
  * @param {Event} e triggered by Sort By button
  */
 function sortByButton(e) {
-    if(e.target.classList.contains("name")) { // note to self: localeCompare bestämmer ordningen på strängar
+    if(e.target.classList.contains("name")) {
         products.sort((product1, product2) => product1.name.localeCompare(product2.name));
     }
     else if(e.target.classList.contains("price")) {
         products.sort((product1, product2) => product1.price - product2.price);
     }
     else if(e.target.classList.contains("rating")) {
-        products.sort((product1, product2) => product1.rating - product2.rating);
+        products.sort((product1, product2) => product2.rating - product1.rating);
     }
     else if(e.target.classList.contains("category")) {
         products.sort((product1, product2) => product1.category.localeCompare(product2.category));
@@ -307,7 +328,7 @@ cartIcon.addEventListener("click", () => {
  * @param {Event} e triggered by the Add to Cart button click
  */
 function handleAddToCart(e) {
-    const productId = Number(e.target.id.split("-")[1]);  // note to self: ?? what??
+    const productId = Number(e.target.id.split("-")[1]); 
     const product = products.find(product => product.id === productId);
 
     if (product) {
@@ -320,6 +341,7 @@ function handleAddToCart(e) {
     }
 }
 
+
 /**
  * Filters out products with a cart amount of 0.
  * Clears the cart display on page.
@@ -328,11 +350,13 @@ function handleAddToCart(e) {
  */
 function updateAndPrintCart() {
     const purchasedProducts = products.filter((product) => product.cartAmount > 0);
-    cart.innerHTML = ""; // Clears the div ("Din varukorg är tom.")
+    previewCart.innerHTML = ""; // Clears the div ("Din varukorg är tom.")
 
     let subTotal = 0;
     let totalQuantity = 0;
 
+    previewCart.innerHTML += `<span class="title-text">Varukorg</span>`;
+    
     purchasedProducts.forEach(product => {
         let finalPrice = product.price;
 
@@ -345,8 +369,8 @@ function updateAndPrintCart() {
         subTotal += totalProductPrice;
         totalQuantity += product.cartAmount; // Update total quantity
 
-        cart.innerHTML += 
-        `<div>
+        previewCart.innerHTML += 
+        `<div class="product-in-preview">
             ${product.name}: ${product.cartAmount} st - ${totalProductPrice.toFixed(2)} kr
         </div>`;
     });
@@ -355,12 +379,12 @@ function updateAndPrintCart() {
     const shippingCost = calculateShippingCost(subTotal, totalQuantity);
 
     // Display the subtotal and shipping cost
-    cart.innerHTML += `<p>Delsumma: ${subTotal.toFixed(2)} kr</p>`;
-    cart.innerHTML += `<p>Frakt: ${shippingCost.toFixed(2)} kr</p>`;
+    previewCart.innerHTML += `<p>Delsumma: ${subTotal.toFixed(2)} kr</p>`;
+    previewCart.innerHTML += `<p>Frakt: ${shippingCost.toFixed(2)} kr</p>`;
 
     const totalWithShipping = subTotal + shippingCost;
 
-    cart.innerHTML += `<p>Totalt: ${totalWithShipping.toFixed(2)} kr</p>`;
+    previewCart.innerHTML += `<p>Totalt: ${totalWithShipping.toFixed(2)} kr</p>`;
 
     // To-checkout button
     previewCart.innerHTML += 
@@ -371,12 +395,13 @@ function updateAndPrintCart() {
     const toCheckoutButton = document.querySelector("#to-checkout-button");
 
     toCheckoutButton.addEventListener("click", function() {
-        const checkoutPage = document.querySelector("#checkout-section"); // note to self: ÄNDRA DETTA
+        const checkoutPage = document.querySelector("#checkout-section"); 
         checkoutPage.scrollIntoView({
             behavior: "smooth"
         });
     });
 }
+
 
 /* -------------------------------------------------------------------------- */
 /*                                RATING SYSTEM                               */
@@ -390,7 +415,7 @@ function updateAndPrintCart() {
 function getRatingHtml(rating) {
     let html = "";
     for(let i = 0; i < rating; i++) {
-        html += `<span class="material-symbols-outlined">star</span>`;
+        html += `<span class="material-symbols-outlined star">kid_star</span>`;
     }
     return html;
 }
@@ -409,11 +434,11 @@ function getRatingHtml(rating) {
  */
 function mondayDiscount(subTotal) {
     const now = new Date();
-    const monday = now.getDay() === 1; // note to self: 1 = måndag
-    const before10Am = now.getHours() < 10; // note to self: innan 10:00
+    const monday = now.getDay() === 1; 
+    const before10Am = now.getHours() < 10; // Before 10:00
 
     if (monday && before10Am) {
-        const discount = subTotal * 0.10; // note to self: 10% rabatt
+        const discount = subTotal * 0.10; // 10% off
         return discount;
     }
     return 0;
@@ -451,7 +476,7 @@ function updateCheckoutPage() {
         productsInCart.innerHTML += `
             <li class="checkout-products">
                 <span>${product.name}</span>
-                <span>${product.cartAmount}</span>
+                <span>${product.cartAmount} st</span>
                 <span>${finalPrice.toFixed(2)} kr</span>
                 <span>${totalProductPrice.toFixed(2)} kr</span>
             </li>`;
@@ -470,7 +495,7 @@ function updateCheckoutPage() {
         <span>Delsumma: ${subTotal.toFixed(2)} kr</span>
     </li>`;
 
-    if (discount > 0) { // note to self: Om discount är 1 = true?? 
+    if (discount > 0) {
         productsInCart.innerHTML += `
         <li>
             <span>Måndagsrabatt: -${discount.toFixed(2)} kr</span>
@@ -563,7 +588,6 @@ function switchPaymentMethod(e) {
     cardOption.classList.toggle("hidden");
     selectedPaymentMethod = e.target.value; // Update selected method
 }
-
 
 
 /* -------------------------------------------------------------------------- */
@@ -681,6 +705,7 @@ function activateOrderButton() {
     orderButton.removeAttribute("disabled"); // Enable order button if everything is correct
 }
 
+
 /* -------------------------------------------------------------------------- */
 /*                         FORM TIMER AND RESET BUTTON                        */
 /* -------------------------------------------------------------------------- */
@@ -692,14 +717,14 @@ let timer;
 
 // Resets both preview cart and checkout cart.
 function clearCart() {
-    cart.innerHTML = "Din varukorg är tom."; 
+    previewCart.innerHTML = "Din varukorg är tom."; 
     productsInCart.innerHTML = "Din varukorg är tom.";
 }
 
 // Restarts the 15 min timer
 function restartTimer() {
 
-    if (timer) { // note to self: om timer har redan ett värde/är en aktiv timer
+    if (timer) {
         clearTimeout(timer)
     }
 
@@ -711,7 +736,7 @@ function restartTimer() {
 
         setTimeout(() => {
             timeoutMessage.style.display = "none"; // hide timeout message
-        }, 8000); // 8 sec
+        }, 7000); // 7 sec
 
         resetButton.click();
 
@@ -729,6 +754,7 @@ formInputs.forEach(element => {
     element.addEventListener("change", restartTimer); 
 });
 
+
 /* -------------------------------------------------------------------------- */
 /*                           ORDER CONFIRMATION PAGE                          */
 /* -------------------------------------------------------------------------- */
@@ -737,28 +763,36 @@ const backButton = document.querySelector("#back-button");
 const orderConfirmationPage = document.querySelector("#order-confirmation");
 const orderSummary = document.querySelector("#order-summary");
 
-
+// Print ordered products
 orderButton.addEventListener('click', function(event) {
     event.preventDefault(); 
     orderConfirmationPage.classList.remove("hidden");
     document.querySelector("form").reset();
     clearCart();
 
+    document.body.classList.add("order-confirmation-active"); // Add no-scroll to background
+
     orderSummary.innerHTML += `<h4>Beställda varor</h4>`
 
     products.forEach(product => {
-    if (product.cartAmount > 0) { // Endast produkter som har beställts
+    if (product.cartAmount > 0) {
         orderSummary.innerHTML += `
-            <li class="checkout-products">
+            <li class="ordered-products">
                 <span>${product.name}</span>
-                <span>${product.cartAmount}</span>
+                <span>${product.cartAmount} st</span>
             </li>`;
         }
     });
 });
 
+/**
+ * Return by reloading page.
+ * Remove no-scroll
+ */
 backButton.addEventListener('click', function() {
     window.scrollTo(0, 0);
     location.reload();
+
+    document.body.classList.remove("order-confirmation-active");
 });
 
