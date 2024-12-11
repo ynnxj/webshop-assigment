@@ -3,11 +3,30 @@
   box-sizing: border-box;
 }
 
+// Dark Mode
+body.dark-mode {
+  background-color: black;
+  color: white;
+}
+
+.dark-button {
+  border: none;
+  background: none;
+  color: white;
+
+  &:hover {
+    color:rgb(172, 162, 156);
+  }
+}
+
 body {
   min-height: 100vh;
   font-family: "Inter", sans-serif;
   line-height: 1.5;
   margin: 0;
+  background-color: white;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
   overflow-x: hidden;
 
   .material-symbols-outlined {
@@ -194,6 +213,8 @@ nav {
     text-align: center;
     border: 2px rgb(224, 216, 212) solid;
     border-radius: 10px;
+    background-color: white;
+    color:black;
 
     .quantity-buttons {
       margin-bottom: 20px;
@@ -250,7 +271,7 @@ nav {
 }
 
 .check-out {
-  border: 2px solid black;
+  border: 2px rgb(224, 216, 212) solid;
   margin-bottom: 30px;
   padding: 50px;
 
@@ -302,7 +323,7 @@ form {
   .customer-data, .payment-info {
     flex: 1;
     padding: 20px;
-    border: 2px solid #000000;
+    border: 2px rgb(224, 216, 212) solid;
   
     span {
       font-weight: bold;
