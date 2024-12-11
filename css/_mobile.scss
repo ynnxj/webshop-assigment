@@ -151,6 +151,27 @@ nav {
     }
   }
 
+  // Cart icon w/ Badge
+  .cart-icon {
+    position: relative;
+
+    .cart-badge {
+      position: absolute;
+      right: 10px;
+      background-color: rgb(231, 218, 218);
+      color: rgb(0, 0, 0);
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 20px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+  }
+
   .cart-dropdown {
     display: none;
     position: absolute;
