@@ -146,12 +146,13 @@ const products = [
     },    
 ]
 
+
 /* -------------------------------------------------------------------------- */
 /*                          ICONS, BUTTONS AND ARROWS                         */
 /* -------------------------------------------------------------------------- */
 
 // Arrow button scrolling down to next section
-document.querySelector(".arrow").addEventListener('click', function () {
+document.querySelector(".arrow").addEventListener("click", function () {
     const nextSection = document.querySelector(".products-section");
     nextSection.scrollIntoView({
         behavior: "smooth"
@@ -159,12 +160,34 @@ document.querySelector(".arrow").addEventListener('click', function () {
 });
 
 // Home button going back to top
-document.querySelector(".home-button").addEventListener('click', function () {
+document.querySelector(".home-button").addEventListener("click", function () {
     window.scrollTo({
         top: 0,
     });
 });
 
+/* -------------------------------------------------------------------------- */
+/*                              DARK MODE TOGGLE                              */
+/* -------------------------------------------------------------------------- */
+
+const toggleButton = document.querySelector("#darkModeToggle");
+
+/**
+ * Dark/Light mode button based on click.
+ * Toggle between dark and light mode.
+ */
+function updateButtonText() {
+  if (document.body.classList.contains("dark-mode")) {
+    toggleButton.textContent = "light_mode";
+  } else {
+    toggleButton.textContent = "dark_mode";
+  }
+}
+
+toggleButton.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+  updateButtonText();
+});
 
 /* -------------------------------------------------------------------------- */
 /*                     DISPLAY PRODUCTS AND SET UP BUTTONS                    */
