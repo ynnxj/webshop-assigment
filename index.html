@@ -2,63 +2,91 @@
 <html lang="sv" prefix="og: http://ogp.me/ns#">
 <head>
     <title>Peepee Poopoos Korvar</title>
-
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="Några keywords här">
+    <meta name="keywords" content="korv, korvar, kött, vegan, vegetariska korvar, kändis, korvgubbe">
     <meta property="og:title" content="Peepee Poopoos Korvar | Webbshop">
-    <meta property="og:description" content="En beskrivning här">
+    <meta property="og:description" content="Bästa korvarna av bästa kvalité!">
     <meta property="og:image" content="#">
     <meta property="og:url" content="#">
 
     <!-- Fonts, Icons & Stylesheets -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=star" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jaro:opsz@6..72&family=Tiny5&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
     <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 
 <body>
     <main>
         
-        <!-- Header -->
+        <!-- Header & Navigation -->
         <header>
-
-            <button id="cart-icon">
-                <span>///</span>
-            </button>
-            
-            <div id="preview-cart" class="hidden">
-                <div id="cart-summary">
-                    Din varukorg är tom.
+            <nav>
+                <!-- Nav title -->
+                <div class="nav-title">
+                    <span>PpPp's</span>
                 </div>
-            </div>
-            
 
+                <!-- Nav buttons & Preview Cart -->
+                <div class="nav-buttons">
+
+                    <button aria-label="home icon button" id="home-button" class="home-button">
+                        <span class="material-symbols-outlined">home</span>
+                    </button>
+
+                    <div class="cart-container">
+
+                        <button aria-label="shopping cart icon button" id="cart-icon" class="cart-icon">
+                            <span class="material-symbols-outlined">shopping_bag</span>
+                        </button>
+                    
+                        <div id="preview-cart" class="cart-dropdown hidden">
+                            <div id="cart-summary">Din varukorg är tom.</div>
+                        </div>
+
+                    </div>
+                    
+                </div> 
+            </nav>
         </header>
 
-        <h1>Peepee Poopoos Korvar</h1>  
+        <!-- Title -->
+        <div class="main-title">
+            <h1>Peepee Poopoos Korvar</h1> 
+            <button class="arrow" aria-label="arrow button scroll down">
+                <span class="material-symbols-outlined">arrow_downward</span> 
+            </button>
+        </div>
 
-        <!-- Products Page -->
-        <section class="page-1">
+        <!-- Product Page -->
+        <section class="products-section">
+            <div class="products-header">
 
-            <div class="sort-by">
-                <span>Sortera efter:</span>
-                <button class="name">Namn</button>
-                <button class="price">Pris</button>
-                <button class="rating">Betyg</button>
-                <button class="category">Kategori</button>
-            </div>
-            
-            <section>
                 <h2>Produkter</h2>
-                <div id="products-list"></div>
-            </section>
+
+                <div class="sort-by">
+                    <span>Sortera efter:</span>
+                    <button class="name">Namn</button>
+                    <button class="price">Pris</button>
+                    <button class="rating">Betyg</button>
+                    <button class="category">Kategori</button>
+                </div>
+
+            </div>
+
+            <!-- Products -->
+            <div class="products-list" id="products-list"></div>
 
         </section>
 
         <!-- Checkout & Payment Page -->
-        <section class="page-2" id="checkout-section">
+        <section class="checkout-section" id="checkout-section">
 
+            <h2>Varukorg</h2>
+            
             <!-- Cart Summary -->
             <div class="check-out">
 
@@ -69,11 +97,12 @@
                     <span>Delsumma</span>
                 </div>
 
-                <ul id="checkout-cart">
-                    Din varukorg är tom.
+                <!--Checkout Cart -->
+                <ul class="checkout-cart" id="checkout-cart">
+                    <li>Din varukorg är tom.</li>
                 </ul>
 
-                                
+                <!-- Discount code input -->                
                 <div class="discount-code">
                     <label>
                         <span>Rabattkod:</span>
@@ -81,6 +110,7 @@
                     </label>
                     <button type="button" id="discount-button">Använd kod</button>
                 </div>
+
             </div>
 
             <!-- Checkout Form -->
@@ -98,7 +128,7 @@
                     </label>
                     <label>
                         <span>Adress</span>
-                        <input id="postal-address" type="text" placeholder="Gatuadress" autocomplete="street-address" required>
+                        <input id="postal-address" type="text" placeholder="Gatuadress" required>
                     </label>
                     <label>
                         <span>Postnummer</span>
@@ -123,72 +153,84 @@
                 </div>
 
                 <!-- Payment Options-->
-                <div class="payment-options">
-                    <div class="selector">
+                <div class="payment-info">
+
+                    <div class="payment-options">
+                        <div class="selector">
+                            <label class="radio-button">
+                                <input type="radio" name="payment-option" value="invoice">
+                                <span>Faktura</span>
+                            </label>
+                            <label class="radio-button">
+                                <input type="radio" name="payment-option" value="card" checked>
+                                <span>Kort</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Method -->
+                    <div class="invoice hidden" id="invoice">
                         <label>
-                            <input type="radio" name="payment-option" value="invoice">
-                            <span>Faktura</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="payment-option" value="card" checked>
-                            <span>Kort</span>
+                            <span>Personnummer</span>
+                            <input type="text" name="personal-id" id="personal-id">
                         </label>
                     </div>
-                </div>
 
-                <!-- Invoice Method -->
-                <div class="invoice hidden" id="invoice">
-                    <label>
-                        <span>Personnummer</span>
-                        <input type="text" name="personal-id" id="personal-id" value="19850505-1234">
-                    </label>
-                </div>
+                    <!-- Card Method -->
+                    <div class="card" id="card">
+                        <label>
+                            <span>Kortnummer</span>
+                            <input id="card-number" type="number">
+                        </label>
+                        <fieldset>
+                            <legend>Date (YY/MM)</legend>
+                            <div class="date-inputs">
+                              <input id="card-year" type="text" placeholder="YY" maxlength="2">
+                              <input id="card-month" type="text" placeholder="MM" maxlength="2">
+                            </div>
+                          </fieldset>
+                        <label>
+                            <span>CVC</span>
+                            <input id="card-cvc" type="number" placeholder="123">
+                        </label>
+                    </div>
 
-                <!-- Card Method -->
-                <div class="card" id="card">
-                    <label>
-                        <span>Kortnummer</span>
-                        <input id="card-number" type="number" value="5100080000000000">
-                    </label>
-                    <label>
-                        <span>Datum</span>
-                        <span>
-                            <input id="card-year" type="number" class="small" placeholder="YY" value="25">/
-                            <input id="card-month" type="number" class="small" placeholder="MM" value="12">
-                        </span>
-                    </label>
-                    <label>
-                        <span>CVC</span>
-                        <input id="card-cvc" type="number" placeholder="123" autocomplete="cc-csc">
-                    </label>
-                </div>
+                    <div class="payment-buttons">
+                        <button id="order-button" disabled>Beställ</button>
+                        <input class="reset-button" type="reset" value="Rensa">
+                    </div>
 
-                <button id="order-button" disabled>Beställ</button>
-                <input type="reset" value="Rensa">
+                </div>
 
             </form>
 
-            <!-- Timeout message -->
+            <!-- Timeout Message -->
             <div class="timeout-message" id="timeout-message">
                 Tiden har gått ut! Din beställning har rensats.
             </div>
 
         </section>
 
-        <!-- Page 3 -->
+        <!-- Order Confirmation Page -->
         <section id="order-confirmation" class="order-confirmation hidden">
 
-            <div id="confirmation-message">
+            <div class="confirmation-message" id="confirmation-message">
                 <h3>Tack för din beställning!</h3>
                 <p>Din beställning har tagits emot.</p>
                 <p>Beräknad leveranstid: 3-7 arbetsdagar.</p>
-                <ul id="order-summary"></ul>
-
-                <button id="back-button">Tillbaka</button>
+                <ul class="order-summary" id="order-summary"></ul>
+                <button class="back-button" id="back-button">Tillbaka</button>
             </div>
 
         </section>
+        
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 Peepee poopoo-mannen. All rights reserved.</p>
+        </footer>
+
     </main>
+    <!-- Script -->
     <script src="script.js"></script>
 </body>
 </html>
