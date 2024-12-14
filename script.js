@@ -381,7 +381,7 @@ function handleAddToCart(e) {
  * Filters out products with a cart amount of 0.
  * Clears the cart display on page.
  * Lists each product in the card with its quantity and total price.
- * Calculates and display the subtotal of the cart content.
+ * Calculates and display the subtotal of the cart content and day.
  */
 function updateAndPrintCart() {
     const purchasedProducts = products.filter((product) => product.cartAmount > 0);
@@ -394,10 +394,16 @@ function updateAndPrintCart() {
     
     purchasedProducts.forEach(product => {
         let finalPrice = product.price;
+        const weekend = isWeekend();
 
         // 10% off if more than 10+ of same product in cart
         if (product.cartAmount >= 10) {
             finalPrice = product.price * 0.9; 
+        }
+
+        // Apply weekend surcharge
+        else if (weekend === true) {
+           finalPrice = product.price * 1.15;
         }
 
         const totalProductPrice = finalPrice * product.cartAmount;
@@ -485,7 +491,7 @@ const productsInCart = document.querySelector("#checkout-cart");
  * Adds 10% discount for 10 of the same product in cart.
  * Adds 25 kr shipping cost.
  * Free shipping when 15+ products in cart.
- * Calculates the sum based on discounts and shipping.
+ * Calculates the sum based on discounts, surcharges and shipping.
  * Creates HTML for products and total sum added in checkout cart.
  */
 function updateCheckoutPage() {
@@ -498,10 +504,16 @@ function updateCheckoutPage() {
 
     purchasedProducts.forEach(product => {
         let finalPrice = product.price; 
+        const weekend = isWeekend();
 
         // Apply 10% discount if 10+ of same product
         if (product.cartAmount >= 10) {
             finalPrice = product.price * 0.9;
+        }
+
+        // Apply weekend surcharge
+        else if (weekend === true) {
+            finalPrice = product.price * 1.15;
         }
 
         const totalProductPrice = finalPrice * product.cartAmount;
